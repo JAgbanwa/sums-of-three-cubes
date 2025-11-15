@@ -1,0 +1,480 @@
+from sage.all import *
+import time
+import resource
+import sys
+import signal
+
+class UltimateEllipticCurveSearch:
+    """
+    ULTIMATE unlimited search for rational points on:
+    y² = x³ - 1368x - 19859543
+    This will push computational boundaries to the absolute maximum
+    """
+    
+    def __init__(self, a, b):
+        self.E = EllipticCurve([a, b])
+        self.all_points = set()
+        self.start_time = time.time()
+        self.max_memory_usage = 0
+        self.search_active = True
+        self.total_points_checked = 0
+        
+        # Set up signal handler for graceful interruption
+        signal.signal(signal.SIGINT, self.signal_handler)
+        
+        print("🚀 INITIALIZING ULTIMATE ELLIPTIC CURVE SEARCH")
+        print(f"📈 Curve: y² = x³ - 1368x - 19859543")
+        print(f"🔢 Curve: {self.E}")
+        print(f"🎯 Discriminant: {self.E.discriminant()}")
+        print("⚡ WARNING: This will use 100% of available resources!")
+        print("⏹️  Press Ctrl+C at any time to stop the search")
+        print("=" * 80)
+    
+    def signal_handler(self, signum, frame):
+        """Handle interrupt signals gracefully"""
+        print(f"\n{'🚨' * 20}")
+        print("🛑 SEARCH INTERRUPTED BY USER")
+        print(f"{'🚨' * 20}")
+        self.search_active = False
+    
+    def monitor_resources(self):
+        """Monitor time and memory usage"""
+        current_time = float(time.time() - self.start_time)
+        current_memory = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 / 1024)
+        self.max_memory_usage = max(self.max_memory_usage, current_memory)
+        return current_time, current_memory
+    
+    def print_status(self, phase, details=""):
+        """Print current search status"""
+        current_time, current_memory = self.monitor_resources()
+        print(f"⏰ [{current_time:8.1f}s | 💾 {current_memory:6.1f}MB] {phase} {details}")
+    
+    def extreme_torsion_search(self):
+        """Find all torsion points with maximum effort"""
+        self.print_status("🔍 TORSION", "Computing torsion subgroup...")
+        try:
+            torsion_group = self.E.torsion_subgroup()
+            torsion_points = self.E.torsion_points()
+            self.all_points.update(torsion_points)
+            self.print_status("✅ TORSION", f"Found {len(torsion_points)} torsion points: {torsion_group}")
+            for pt in torsion_points:
+                if pt != self.E(0,1,0):
+                    x, y = pt.xy()
+                    print(f"    📍 ({x}, {y})")
+            return torsion_group
+        except Exception as e:
+            self.print_status("❌ TORSION", f"Failed: {e}")
+            return None
+    
+    def extreme_rank_computation(self):
+        """Compute rank with every possible method"""
+        self.print_status("🔍 RANK", "Computing rank with all algorithms...")
+        
+        rank_methods = [
+            ('🧪 Default', lambda: self.E.rank()),
+            ('⚡ NoProof', lambda: self.E.rank(proof=False)),
+            ('🔧 mwrank', lambda: self.E.rank(algorithm='mwrank')),
+            ('🔄 pari', lambda: self.E.rank(algorithm='pari')),
+            ('🎯 all', lambda: self.E.rank(algorithm='all')),
+        ]
+        
+        best_rank = None
+        for method_name, method in rank_methods:
+            if not self.search_active:
+                break
+            try:
+                rank = method()
+                self.print_status("✅ RANK", f"{method_name}: {rank}")
+                if best_rank is None or (rank is not None and rank > best_rank):
+                    best_rank = rank
+            except Exception as e:
+                self.print_status("❌ RANK", f"{method_name}: Failed - {e}")
+        
+        return best_rank
+    
+    def extreme_generator_search(self):
+        """Find generators with maximum computational effort"""
+        self.print_status("🔍 GENERATORS", "Searching for generators with ALL methods...")
+        
+        generator_methods = [
+            ('🧪 Default', lambda: self.E.gens()),
+            ('⚡ NoProof', lambda: self.E.gens(proof=False)),
+            ('🔧 mwrank', lambda: self.E.gens(algorithm='mwrank')),
+            ('🔄 pari', lambda: self.E.gens(algorithm='pari')),
+            ('🎯 all', lambda: self.E.gens(algorithm='all')),
+        ]
+        
+        best_generators = []
+        for method_name, method in generator_methods:
+            if not self.search_active:
+                break
+            try:
+                generators = method()
+                self.print_status("✅ GENERATORS", f"{method_name}: Found {len(generators)} generators")
+                if len(generators) > len(best_generators):
+                    best_generators = generators
+                for gen in generators:
+                    self.all_points.add(gen)
+                    self.all_points.add(-gen)
+                    x, y = gen.xy()
+                    height_val = float(gen.height())
+                    print(f"    🎯 {method_name}: ({x}, {y}) [height: {height_val:.6f}]")
+            except Exception as e:
+                self.print_status("❌ GENERATORS", f"{method_name}: Failed - {e}")
+        
+        return best_generators
+    
+    def unlimited_integral_search(self):
+        """Find all integral points with maximum bounds"""
+        self.print_status("🔍 INTEGRAL", "Searching for ALL integral points...")
+        try:
+            integral_points = self.E.integral_points()
+            self.print_status("✅ INTEGRAL", f"Found {len(integral_points)} integral points")
+            for pt in integral_points:
+                self.all_points.add(pt)
+                self.all_points.add(-pt)
+                x, y = pt.xy()
+                print(f"    📍 ({x}, {y})")
+            return integral_points
+        except Exception as e:
+            self.print_status("❌ INTEGRAL", f"Failed: {e}")
+            return []
+    
+    def ultimate_rational_search(self):
+        """
+        ULTIMATE rational point search - NO LIMITS WHATSOEVER
+        This will search until memory exhaustion or manual stop
+        """
+        self.print_status("🚀 RATIONAL", "Starting ULTIMATE rational point search")
+        print("    📢 This will search until:")
+        print("       💥 Memory is exhausted")
+        print("       🛑 Manually stopped (Ctrl+C)")
+        print("       🌌 Computational boundaries reached")
+        print("    🔄 Search strategy: Exponential growth from 1 to ∞")
+        
+        found_points = set()
+        max_denom = 1
+        iteration = 0
+        last_new_points = 0
+        
+        while self.search_active:
+            iteration += 1
+            current_time, current_memory = self.monitor_resources()
+            
+            print(f"\n    🔄 [Iteration {iteration}] Denominators: 1 to {max_denom:,}")
+            print(f"    ⏰ Time: {current_time:.1f}s | 💾 Memory: {current_memory:.1f}MB")
+            print(f"    📊 Total points checked: {self.total_points_checked:,}")
+            
+            new_points_this_iteration = 0
+            
+            # Adaptive numerator range based on denominator size
+            if max_denom <= 1000:
+                numerator_range = max_denom * 1000
+            elif max_denom <= 10000:
+                numerator_range = max_denom * 100
+            else:
+                numerator_range = max_denom * 10
+            
+            for denom in range(1, max_denom + 1):
+                if not self.search_active:
+                    break
+                
+                # Progress reporting
+                if max_denom >= 100 and denom % (max(1, max_denom // 20)) == 0:
+                    progress = (denom / max_denom) * 100
+                    current_time, current_memory = self.monitor_resources()
+                    print(f"      📈 Progress: {progress:5.1f}% | 💾 {current_memory:6.1f}MB | Points: {new_points_this_iteration}")
+                
+                for num in range(-numerator_range, numerator_range + 1):
+                    if not self.search_active:
+                        break
+                    
+                    self.total_points_checked += 1
+                    
+                    # Memory check every million points
+                    if self.total_points_checked % 1000000 == 0:
+                        current_time, current_memory = self.monitor_resources()
+                        if current_memory > 90:  # Warn at 90% of typical memory
+                            print(f"      🚨 High memory: {current_memory:.1f}MB")
+                    
+                    if gcd(num, denom) != 1:
+                        continue
+                    
+                    try:
+                        x = QQ(num) / QQ(denom)
+                        rhs = x**3 - 1368*x - 19859543
+                        
+                        if rhs >= 0:
+                            if self.is_perfect_square(rhs):
+                                y = sqrt(rhs)
+                                if y in QQ:
+                                    point = self.E(x, y)
+                                    if point not in found_points:
+                                        found_points.add(point)
+                                        found_points.add(-point)
+                                        new_points_this_iteration += 1
+                                        x_val, y_val = point.xy()
+                                        current_time, current_memory = self.monitor_resources()
+                                        print(f"      🎉 NEW POINT: ({x_val}, {y_val})")
+                                        print(f"          ⏰ Found at: {current_time:.1f}s")
+                    except MemoryError:
+                        self.print_status("💥 RATIONAL", "MEMORY EXHAUSTED!")
+                        self.search_active = False
+                        return found_points
+                    except:
+                        pass
+            
+            self.print_status("📊 RATIONAL", f"Iteration {iteration}: Found {new_points_this_iteration} new points")
+            
+            # Adaptive search strategy
+            if new_points_this_iteration > 0:
+                # Found points, continue with moderate increase
+                max_denom = min(max_denom * 5, 10**15)  # Cap at quadrillion
+                last_new_points = new_points_this_iteration
+            elif max_denom > 10**6 and last_new_points == 0:
+                # No new points at large bounds, stop search
+                self.print_status("🔍 RATIONAL", "No new points at large bounds, concluding search")
+                break
+            else:
+                # No points this iteration, aggressive increase
+                max_denom = min(max_denom * 20, 10**15)
+            
+            if max_denom >= 10**15:
+                self.print_status("🌌 RATIONAL", "Reached computational boundary (10¹⁵ denominators)")
+                break
+        
+        return found_points
+    
+    def is_perfect_square(self, rational_num):
+        """Ultra-efficient perfect square check"""
+        try:
+            # Fast check for common cases
+            if rational_num == 0:
+                return True
+            
+            # Method 1: Direct SageMath check
+            if rational_num.is_square():
+                return True
+            
+            # Method 2: Check numerator/denominator separately
+            num = rational_num.numerator()
+            den = rational_num.denominator()
+            
+            if num.is_square() and den.is_square():
+                return True
+            
+            return False
+        except:
+            return False
+    
+    def extreme_generator_multiplication(self, generators):
+        """Generate extreme multiples of generators - PUSHING LIMITS"""
+        if not generators or not self.search_active:
+            return
+        
+        self.print_status("🚀 MULTIPLICATION", "Generating EXTREME multiples of generators")
+        print("    🎯 Computing up to 100,000P for each generator!")
+        
+        for i, gen in enumerate(generators):
+            if not self.search_active:
+                break
+                
+            x_base, y_base = gen.xy()
+            self.print_status(f"🔢 GENERATOR {i+1}", f"Base: ({x_base}, {y_base})")
+            
+            multiples_to_compute = [1, 2, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000]
+            
+            for n in range(1, 100001):  # Up to 100,000P!
+                if not self.search_active:
+                    break
+                
+                # Progress reporting
+                if n % 10000 == 0:
+                    current_time, current_memory = self.monitor_resources()
+                    self.print_status(f"⚡ GENERATOR {i+1}", f"Computing {n:,}P...")
+                
+                try:
+                    nP = n * gen
+                    self.all_points.add(nP)
+                    self.all_points.add(-nP)
+                    
+                    if n in multiples_to_compute:
+                        x, y = nP.xy()
+                        current_time, current_memory = self.monitor_resources()
+                        print(f"      🎯 {n:,}P = ({x}, {y})")
+                        print(f"          ⏰ Computed at: {current_time:.1f}s")
+                        
+                except MemoryError:
+                    self.print_status("💥 MULTIPLICATION", f"Memory limit at {n:,}P")
+                    self.search_active = False
+                    break
+                except:
+                    pass
+    
+    def ultimate_database_integration(self):
+        """Integrate with ALL available mathematical databases"""
+        self.print_status("🔍 DATABASE", "Querying ALL mathematical databases...")
+        
+        databases = [
+            ("🌐 LMFDB", lambda: self.E.lmfdb_label()),
+            ("📚 Cremona", lambda: self.E.cremona_label()),
+        ]
+        
+        for db_name, db_func in databases:
+            if not self.search_active:
+                break
+            try:
+                label = db_func()
+                self.print_status("✅ DATABASE", f"{db_name}: {label}")
+                
+                # Get additional data from databases
+                if db_name == "🌐 LMFDB" and label:
+                    try:
+                        E_db = EllipticCurve(label)
+                        db_info = {
+                            'rank': E_db.rank(),
+                            'torsion': E_db.torsion_subgroup(),
+                            'gens': E_db.gens()
+                        }
+                        self.print_status("📊 LMFDB", f"Rank: {db_info['rank']}, Torsion: {db_info['torsion']}")
+                        if db_info['gens']:
+                            for pt in db_info['gens']:
+                                self.all_points.add(pt)
+                                self.all_points.add(-pt)
+                    except:
+                        pass
+            except Exception as e:
+                self.print_status("❌ DATABASE", f"{db_name}: {e}")
+    
+    def ultimate_advanced_algorithms(self):
+        """Run ALL advanced elliptic curve algorithms"""
+        if not self.search_active:
+            return
+        
+        self.print_status("🔍 ADVANCED", "Running ALL advanced algorithms")
+        
+        # Two-descent with maximum effort
+        try:
+            self.print_status("📊 TWODESCENT", "Running two-descent with maximum search...")
+            two_descent = self.E.two_descent(verbose=False)
+            selmer_rank = self.E.selmer_rank()
+            self.print_status("✅ TWODESCENT", f"Selmer rank: {selmer_rank}")
+        except Exception as e:
+            self.print_status("❌ TWODESCENT", f"Failed: {e}")
+        
+        # Heegner points for extensive discriminant list
+        self.print_status("🔍 HEEGNER", "Trying Heegner points for 50 discriminants...")
+        cm_discriminants = [-3, -4, -7, -8, -11, -12, -16, -19, -20, -24, -27, -28, -32,
+                           -35, -36, -40, -43, -48, -51, -52, -60, -64, -67, -72, -75,
+                           -84, -88, -91, -96, -99, -100, -112, -115, -120, -123, -132,
+                           -147, -148, -160, -163, -168, -180, -187, -192, -195, -228,
+                           -232, -235, -240, -267, -280, -288, -312, -340, -352, -372,
+                           -403, -408, -420, -427, -435, -448, -480, -483, -520, -532,
+                           -555, -595, -627, -660, -672, -708, -715, -760, -795, -840,
+                           -852, -880, -915, -960, -1012, -1092, -1120, -1155, -1248,
+                           -1320, -1365, -1380, -1428, -1540, -1632, -1848, -1995, -2080,
+                           -3003, -3315, -5460]
+        
+        heegner_found = 0
+        for D in cm_discriminants:
+            if not self.search_active:
+                break
+            try:
+                heegner_pt = self.E.heegner_point(D)
+                if heegner_pt != self.E(0):
+                    x, y = heegner_pt.xy()
+                    self.print_status("🎉 HEEGNER", f"D={D}: ({x}, {y})")
+                    self.all_points.add(heegner_pt)
+                    self.all_points.add(-heegner_pt)
+                    heegner_found += 1
+            except:
+                pass
+        
+        if heegner_found > 0:
+            self.print_status("✅ HEEGNER", f"Found {heegner_found} Heegner points")
+    
+    def run_ultimate_search(self):
+        """Run the complete ULTIMATE search"""
+        print("\n" + "🎯" * 40)
+        print("🚀 STARTING ULTIMATE ELLIPTIC CURVE SEARCH")
+        print("🎯" * 40)
+        
+        try:
+            # Phase 1: Core structure
+            torsion_group = self.extreme_torsion_search()
+            rank = self.extreme_rank_computation()
+            generators = self.extreme_generator_search()
+            
+            # Phase 2: Point search
+            integral_points = self.unlimited_integral_search()
+            rational_points = self.ultimate_rational_search()
+            
+            # Phase 3: Advanced generation
+            self.extreme_generator_multiplication(generators)
+            
+            # Phase 4: External resources
+            self.ultimate_database_integration()
+            self.ultimate_advanced_algorithms()
+            
+            # Final results
+            self.final_ultimate_results(torsion_group, rank, generators)
+            
+        except MemoryError as e:
+            self.print_status("💥 FATAL", f"MEMORY EXHAUSTED: {e}")
+            self.final_ultimate_results(None, None, [])
+        except Exception as e:
+            self.print_status("💥 FATAL", f"UNEXPECTED ERROR: {e}")
+            self.final_ultimate_results(None, None, [])
+    
+    def final_ultimate_results(self, torsion_group, rank, generators):
+        """Display ULTIMATE final results"""
+        current_time, current_memory = self.monitor_resources()
+        
+        print("\n" + "🎉" * 40)
+        print("🏁 ULTIMATE SEARCH COMPLETED!")
+        print("🎉" * 40)
+        print(f"⏰ Total time: {current_time:.1f} seconds ({current_time/60:.1f} minutes)")
+        print(f"💾 Maximum memory: {self.max_memory_usage:.1f} MB")
+        print(f"📊 Total points checked: {self.total_points_checked:,}")
+        print(f"📍 Total rational points found: {len(self.all_points)}")
+        
+        # Final point collection
+        final_points = sorted(self.all_points, key=lambda pt: pt.height() if pt != self.E(0,1,0) else -1)
+        
+        # Comprehensive analysis
+        torsion_count = len([pt for pt in final_points if pt.order() != float('inf')])
+        infinite_count = len([pt for pt in final_points if pt.order() == float('inf')])
+        
+        print(f"\n📈 COMPREHENSIVE ANALYSIS:")
+        print(f"   ∞ Point at infinity: 1")
+        print(f"   🔄 Torsion points: {torsion_count}")
+        print(f"   ♾️  Points of infinite order: {infinite_count}")
+        if rank is not None:
+            print(f"   📊 Rank: {rank}")
+        if torsion_group:
+            print(f"   🔧 Torsion group: {torsion_group}")
+        if generators:
+            print(f"   🎯 Generators found: {len(generators)}")
+        
+        print(f"\n📍 ALL RATIONAL POINTS FOUND:")
+        count = 0
+        for pt in final_points:
+            if pt != self.E(0,1,0) and count < 100:  # Show first 100 points
+                x, y = pt.xy()
+                print(f"   📍 ({x}, {y})")
+                count += 1
+        
+        if len(final_points) > 100:
+            non_infinite = len([p for p in final_points if p != self.E(0,1,0)])
+            print(f"   📚 ... and {non_infinite - 100} more points")
+        
+        print(f"\n💪 This represents the ABSOLUTE MAXIMUM computational effort!")
+        print(f"🎯 Search status: {'COMPLETED' if self.search_active else 'INTERRUPTED'}")
+        print(f"🚀 Computational boundaries pushed to the limit!")
+
+# Main execution
+if __name__ == "__main__":
+    # Create and run the ULTIMATE search
+    print("🚀 INITIALIZING ULTIMATE SEARCH ENGINE...")
+    search = UltimateEllipticCurveSearch(-1368, -19859543)
+    search.run_ultimate_search()

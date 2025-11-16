@@ -1,345 +1,176 @@
-from sage.all import *
+# SageMath code for computing rational points on elliptic curve
+# y^2 = x^3 - 228n*x - (432n^6 - 1368n^3 - 361)
+# For n = 1
 
-def comprehensive_integer_points_search():
-    """
-    COMPREHENSIVE search for ALL integer points on:
-    y² = x³ - 228x + 1297
-    Using mathematical methods without arbitrary bounds
-    """
-    print("COMPREHENSIVE INTEGER POINTS SEARCH")
-    print("=" * 70)
-    print("Curve: y² = x³ - 228x + 1297")
-    print("=" * 70)
-    
-    # Define the elliptic curve
-    E = EllipticCurve([-228, 1297])
-    print(f"Elliptic Curve: {E}")
-    print()
-    
-    # 1. BASIC CURVE ANALYSIS
-    print("1. BASIC CURVE PROPERTIES")
-    print("-" * 40)
-    disc = E.discriminant()
-    print(f"Discriminant: {disc}")
-    print(f"Curve is non-singular: {disc != 0}")
-    
-    # Compute approximate bounds for integer points
-    height_bound = E.height_function().max_height()
-    print(f"Approximate height bound: {height_bound}")
-    print()
-    
-    # 2. SAGE'S BUILT-IN INTEGRAL POINTS METHOD
-    print("2. SAGE INTEGRAL_POINTS() METHOD")
-    print("-" * 40)
-    try:
-        integral_points = E.integral_points()
-        print(f"Sage found {len(integral_points)} integral points:")
-        for pt in integral_points:
-            x, y = pt.xy()
-            print(f"  ({x}, {y})")
-    except Exception as e:
-        print(f"Sage integral_points() failed: {e}")
-        integral_points = []
-    print()
-    
-    # 3. MWrank INTEGRAL POINTS SEARCH
-    print("3. MWRANK INTEGRAL POINTS")
-    print("-" * 40)
-    try:
-        mwrank_curve = mwrank_EllipticCurve([-228, 1297])
-        mwrank_curve.solve()
-        mwrank_points = mwrank_curve.get_solutions()
-        if mwrank_points:
-            print(f"mwrank found {len(mwrank_points)} integral points:")
-            for pt in mwrank_points:
-                print(f"  {pt}")
-        else:
-            print("mwrank found no integral points")
-    except Exception as e:
-        print(f"mwrank failed: {e}")
-        mwrank_points = []
-    print()
-    
-    # 4. SYSTEMATIC SEARCH USING HEIGHT BOUNDS
-    print("4. SYSTEMATIC SEARCH WITH PROVEN BOUNDS")
-    print("-" * 40)
-    
-    def compute_naiive_bound():
-        """Compute a naiive bound for |x| based on curve growth"""
-        # For large |x|, y² ≈ x³, so |x| grows slower than |y|
-        # A conservative bound: |x| < (max|y|)^(2/3)
-        # But we need an actual proven bound
-        return 10**6  # Conservative bound
-    
-    def find_integer_points_by_bounds():
-        """Find integer points using mathematical bounds"""
-        print("Computing proven bounds for integer points...")
-        
-        # Use Sage's proven bounds for integral points
-        try:
-            # Get the rank and generators first
-            rank = E.rank()
-            if rank > 0:
-                gens = E.gens()
-                print(f"Rank: {rank}, using generators to bound search")
-                
-                # The Mordell-Weil theorem gives us bounds
-                # Integral points are among linear combinations of generators
-                # with bounded coefficients
-                
-                # Compute height pairing matrix
-                if gens:
-                    h = E.height_pairing_matrix(gens)
-                    print(f"Height pairing matrix determinant: {h.det()}")
-            else:
-                print("Rank 0 - only torsion points exist")
-                
-        except Exception as e:
-            print(f"Bound computation failed: {e}")
-        
-        # Use a systematic search within reasonable bounds
-        bound = compute_naiive_bound()
-        print(f"Using search bound |x| ≤ {bound}")
-        
-        found_points = set()
-        x_min = -bound
-        x_max = bound
-        
-        print(f"Searching x from {x_min} to {x_max}...")
-        
-        for x in range(x_min, x_max + 1):
-            rhs = x**3 - 228*x + 1297
-            if rhs >= 0:
-                y = sqrt(rhs)
-                if y in ZZ:
-                    point = (x, y)
-                    found_points.add(point)
-                    if y != 0:
-                        found_points.add((x, -y))
-        
-        return sorted(found_points)
-    
-    systematic_points = find_integer_points_by_bounds()
-    print(f"Systematic search found {len(systematic_points)} integer points:")
-    for pt in systematic_points[:10]:  # Show first 10
-        print(f"  {pt}")
-    if len(systematic_points) > 10:
-        print(f"  ... and {len(systematic_points) - 10} more")
-    print()
-    
-    # 5. COMBINE ALL FOUND POINTS
-    print("5. COMBINING RESULTS FROM ALL METHODS")
-    print("-" * 40)
-    
-    all_integer_points = set()
-    
-    # Add points from Sage's integral_points
-    for pt in integral_points:
-        x, y = pt.xy()
-        all_integer_points.add((x, y))
-        if y != 0:
-            all_integer_points.add((x, -y))
-    
-    # Add points from mwrank
-    for pt in mwrank_points:
-        x, y = pt
-        all_integer_points.add((x, y))
-        if y != 0:
-            all_integer_points.add((x, -y))
-    
-    # Add points from systematic search
-    all_integer_points.update(systematic_points)
-    
-    # Convert to sorted list
-    final_points = sorted(all_integer_points, key=lambda p: (abs(p[0]), p[0]))
-    
-    print(f"Total unique integer points found: {len(final_points)}")
-    print("All integer points:")
-    for pt in final_points:
-        print(f"  {pt}")
-    
-    return E, final_points
+n = 1
 
-def verify_integer_points(E, points):
-    """
-    Verify that all found points are actually integer points on the curve
-    """
-    print("\n" + "=" * 70)
-    print("POINT VERIFICATION")
-    print("=" * 70)
+# Calculate coefficients
+a = -228 * n
+b = -(432 * n^6 - 1368 * n^3 - 361)
+
+print("="*80)
+print(f"ELLIPTIC CURVE FOR n = {n}")
+print("="*80)
+print(f"Equation: y^2 = x^3 - 228n*x - (432n^6 - 1368n^3 - 361)")
+print(f"Substituting n = {n}:")
+print(f"  a = -228*{n} = {a}")
+print(f"  b = -(432*{n}^6 - 1368*{n}^3 - 361) = -(432 - 1368 - 361) = {b}")
+print(f"\nSimplified equation:")
+print(f"y^2 = x^3 + ({a})*x + ({b})")
+print("="*80)
+
+# Define the elliptic curve over Q
+E = EllipticCurve(QQ, [a, b])
+
+print(f"\nCurve object: {E}")
+print(f"Discriminant: {E.discriminant()}")
+print(f"j-invariant: {E.j_invariant()}")
+print(f"Is non-singular: {E.discriminant() != 0}")
+print("="*80)
+
+# Find rational points
+print("\nCOMPUTING RATIONAL POINTS...")
+print("This may take a moment for large coefficients...")
+print("="*80)
+
+rational_points = []
+
+# Try to find generators with increased limits
+print("\nAttempting Mordell-Weil group computation...")
+try:
+    gens = E.gens(descent_second_limit=25)
+    rank = E.rank()
+    print(f"✓ Rank of E(Q): {rank}")
+    print(f"✓ Number of generators: {len(gens)}")
     
-    verified_points = []
-    all_valid = True
+    if gens:
+        for i, gen in enumerate(gens):
+            print(f"\nGenerator {i+1}: {gen}")
+            rational_points.append(gen)
+except Exception as e:
+    print(f"Mordell-Weil computation issue: {e}")
+    gens = []
+
+# Search for points with bounded height
+print("\n" + "="*80)
+print("SEARCHING FOR RATIONAL POINTS (height bound: 10^7)...")
+print("="*80)
+
+try:
+    points_found = E.point_search(10^7, verbose=False)
+    print(f"✓ Found {len(points_found)} total rational points")
     
-    for (x, y) in points:
-        # Check if coordinates are integers
-        if x not in ZZ or y not in ZZ:
-            print(f"ERROR: ({x}, {y}) has non-integer coordinates!")
-            all_valid = False
-            continue
+    # Filter out the point at infinity and add to our list
+    for pt in points_found:
+        if not pt.is_zero() and pt not in rational_points:
+            rational_points.append(pt)
             
-        # Check if point lies on curve
-        lhs = y**2
-        rhs = x**3 - 228*x + 1297
-        on_curve = (lhs == rhs)
-        
-        if not on_curve:
-            print(f"ERROR: ({x}, {y}) is not on the curve!")
-            print(f"  {lhs} ≠ {rhs}")
-            all_valid = False
-        else:
-            verified_points.append((x, y))
-    
-    if all_valid:
-        print("✓ All points verified as valid integer points on the curve")
-    else:
-        print("✗ Some points are invalid")
-    
-    return verified_points, all_valid
-
-def analyze_point_properties(E, points):
-    """
-    Analyze properties of the integer points
-    """
-    print("\n" + "=" * 70)
-    print("POINT PROPERTIES ANALYSIS")
-    print("=" * 70)
-    
-    if not points:
-        print("No points to analyze")
-        return
-    
-    # Convert to elliptic curve points
-    ec_points = []
-    for (x, y) in points:
-        try:
-            pt = E(x, y)
-            ec_points.append(pt)
-        except:
-            print(f"Warning: Could not create EC point from ({x}, {y})")
-    
-    print(f"Analyzing {len(ec_points)} points...")
-    
-    # Group points by order
-    torsion_points = [pt for pt in ec_points if pt.order() != float('inf')]
-    infinite_points = [pt for pt in ec_points if pt.order() == float('inf')]
-    
-    print(f"Torsion points (finite order): {len(torsion_points)}")
-    for pt in torsion_points:
-        x, y = pt.xy()
-        print(f"  ({x}, {y}) - order {pt.order()}")
-    
-    print(f"Points of infinite order: {len(infinite_points)}")
-    for pt in infinite_points[:5]:  # Show first 5
-        x, y = pt.xy()
-        print(f"  ({x}, {y})")
-    if len(infinite_points) > 5:
-        print(f"  ... and {len(infinite_points) - 5} more")
-    
-    # Check if we have generators
+except Exception as e:
+    print(f"Point search encountered issue: {e}")
+    print("Trying with smaller bound...")
     try:
-        rank = E.rank()
-        gens = E.gens()
-        if gens:
-            print(f"\nGenerators of infinite part (rank {rank}):")
-            for i, gen in enumerate(gens):
-                x, y = gen.xy()
-                print(f"  Generator {i+1}: ({x}, {y})")
+        points_found = E.point_search(10^6, verbose=False)
+        print(f"✓ Found {len(points_found)} points with reduced bound")
+        for pt in points_found:
+            if not pt.is_zero() and pt not in rational_points:
+                rational_points.append(pt)
     except:
         pass
-    
-    print()
 
-def advanced_integer_points_methods():
-    """
-    Use advanced methods for finding integer points
-    """
-    print("\n" + "=" * 70)
-    print("ADVANCED INTEGER POINTS METHODS")
-    print("=" * 70)
-    
-    E = EllipticCurve([-228, 1297])
-    
-    # Method 1: Use Simon's two-descent for integral points
-    print("Method 1: Two-descent for integral points")
-    try:
-        # This uses more sophisticated bounds
-        integral_pts_v2 = E.integral_points(mw_base='compute')
-        print(f"Advanced integral points: {len(integral_pts_v2)} found")
-        for pt in integral_pts_v2:
-            x, y = pt.xy()
-            print(f"  ({x}, {y})")
-    except Exception as e:
-        print(f"Advanced method failed: {e}")
-    
-    print()
-    
-    # Method 2: Use L-function and analytic methods
-    print("Method 2: Analytic bounds")
-    try:
-        # Get analytic rank
-        analytic_rank = E.analytic_rank()
-        print(f"Analytic rank: {analytic_rank}")
-        
-        # For rank 0 curves, only torsion points exist
-        if analytic_rank == 0:
-            print("Analytic rank is 0 - only torsion points exist")
-            torsion_pts = E.torsion_points()
-            integer_torsion = [pt for pt in torsion_pts if pt != E(0,1,0) and pt[0] in ZZ and pt[1] in ZZ]
-            print(f"Integer torsion points: {len(integer_torsion)}")
-            for pt in integer_torsion:
-                x, y = pt.xy()
-                print(f"  ({x}, {y})")
-    except:
-        print("Analytic methods not available")
-    
-    print()
+# Sort points by height (smallest first)
+if rational_points:
+    rational_points.sort(key=lambda P: P.height())
 
-# Main execution
-if __name__ == "__main__":
-    print("FINDING ALL INTEGER POINTS ON y² = x³ - 228x + 1297")
-    print()
+print("\n" + "="*80)
+print(f"FIRST 5 RATIONAL POINTS AND THEIR MULTIPLES")
+print("="*80)
+
+if not rational_points:
+    print("\nNo non-trivial rational points found with current search bounds.")
+    print("The curve may have rank 0 or points at very high heights.")
+else:
+    # Take first 5 points (or fewer if we don't have 5)
+    num_points = min(5, len(rational_points))
     
-    # Run the comprehensive search
-    E, all_integer_points = comprehensive_integer_points_search()
-    
-    # Run advanced methods
-    advanced_integer_points_methods()
-    
-    # Verify all points
-    verified_points, all_valid = verify_integer_points(E, all_integer_points)
-    
-    # Analyze point properties
-    analyze_point_properties(E, verified_points)
-    
-    # Final summary
-    print("\n" + "=" * 70)
-    print("FINAL SUMMARY")
-    print("=" * 70)
-    
-    print(f"Total integer points found: {len(verified_points)}")
-    
-    # Count points in each quadrant
-    q1 = len([(x,y) for x,y in verified_points if x >= 0 and y >= 0])
-    q2 = len([(x,y) for x,y in verified_points if x < 0 and y >= 0])
-    q3 = len([(x,y) for x,y in verified_points if x < 0 and y < 0])
-    q4 = len([(x,y) for x,y in verified_points if x >= 0 and y < 0])
-    
-    print("Distribution by quadrant:")
-    print(f"  Quadrant I (x≥0, y≥0): {q1} points")
-    print(f"  Quadrant II (x<0, y≥0): {q2} points") 
-    print(f"  Quadrant III (x<0, y<0): {q3} points")
-    print(f"  Quadrant IV (x≥0, y<0): {q4} points")
-    
-    # Find smallest and largest x-coordinates
-    if verified_points:
-        x_coords = [x for x,y in verified_points]
-        min_x = min(x_coords)
-        max_x = max(x_coords)
-        print(f"x-coordinate range: [{min_x}, {max_x}]")
+    for idx in range(num_points):
+        P = rational_points[idx]
         
-        y_coords = [abs(y) for x,y in verified_points]
-        max_y = max(y_coords)
-        print(f"Maximum |y|-coordinate: {max_y}")
-    
-    print("\nSEARCH COMPLETE - ALL INTEGER POINTS FOUND")
+        print("\n" + "█"*80)
+        print(f"BASE POINT #{idx+1}")
+        print("█"*80)
+        print(f"Point: {P}")
+        print(f"Height: {P.height()}")
+        
+        # Display x and y coordinates
+        if not P.is_zero():
+            x_coord = P[0]
+            y_coord = P[1]
+            print(f"\nCoordinates:")
+            print(f"x = {x_coord}")
+            print(f"y = {y_coord}")
+            
+            # Show if coordinates are integers or fractions
+            if x_coord.denominator() == 1:
+                print(f"x is an integer: {x_coord.numerator()}")
+            else:
+                print(f"x = {x_coord.numerator()}/{x_coord.denominator()}")
+                
+            if y_coord.denominator() == 1:
+                print(f"y is an integer: {y_coord.numerator()}")
+            else:
+                print(f"y = {y_coord.numerator()}/{y_coord.denominator()}")
+        
+        print("\n" + "-"*80)
+        print("MULTIPLES:")
+        print("-"*80)
+        
+        # Compute multiples 1P through 5P
+        for k in range(1, 6):
+            kP = k * P
+            
+            print(f"\n{k}P:")
+            
+            if kP.is_zero():
+                print("  → Point at infinity (O)")
+            else:
+                x_k = kP[0]
+                y_k = kP[1]
+                
+                print(f"  x = {x_k}")
+                print(f"  y = {y_k}")
+                
+                # Verify it's on the curve
+                lhs = y_k^2
+                rhs = x_k^3 + a*x_k + b
+                
+                if lhs == rhs:
+                    print(f"  ✓ Verified on curve")
+                else:
+                    print(f"  ✗ ERROR: Not on curve!")
+                
+                # Show sizes
+                if x_k.denominator() == 1:
+                    print(f"  x is integer with {len(str(x_k.numerator()))} digits")
+                else:
+                    print(f"  x numerator: {len(str(x_k.numerator()))} digits, denominator: {len(str(x_k.denominator()))} digits")
+                
+                # Try to show decimal approximation for reasonable sizes
+                try:
+                    if abs(float(x_k)) < 10^10 and abs(float(y_k)) < 10^10:
+                        print(f"  ≈ ({float(x_k):.6f}, {float(y_k):.6f})")
+                except:
+                    print(f"  (coordinates too large for decimal display)")
+
+print("\n" + "="*80)
+print("COMPUTATION COMPLETE")
+print("="*80)
+
+# Summary statistics
+if rational_points:
+    print(f"\nTotal rational points found: {len(rational_points)}")
+    print(f"Displayed: {min(5, len(rational_points))} base points with their multiples (1P through 5P)")
+else:
+    print("\nNo rational points found. Consider:")
+    print("  - Increasing descent_second_limit further")
+    print("  - Using saturation techniques")
+    print("  - Checking if the curve has rank 0")

@@ -1,0 +1,141 @@
+# SageMath code for computing rational points on elliptic curve
+# y^2 = x^3 - 228n*x - (432n^6 - 1368n^3 - 361)
+
+# Set the value of n
+n = 3
+
+# Calculate coefficients
+a = -228 * n
+b = -(432 * n^6 - 1368 * n^3 - 361)
+
+print(f"For n = {n}:")
+print(f"Elliptic Curve: y^2 = x^3 + ({a})*x + ({b})")
+print(f"y^2 = x^3 - 684*x - (11664 - 37044 - 361)")
+print(f"y^2 = x^3 - 684*x + 25741")
+print("=" * 80)
+
+# Define the elliptic curve over Q
+E = EllipticCurve(QQ, [a, b])
+
+print(f"\nElliptic Curve: {E}")
+print(f"Discriminant: {E.discriminant()}")
+print(f"j-invariant: {E.j_invariant()}")
+
+# Check if the curve is non-singular
+if E.discriminant() != 0:
+    print("✓ The curve is non-singular (discriminant ≠ 0)")
+else:
+    print("✗ The curve is singular!")
+
+print("=" * 80)
+
+# Search for rational points using various methods
+print("\nSearching for rational points...")
+
+# Method 1: Try to find generators using Mordell-Weil group
+try:
+    print("\n--- Attempting to compute Mordell-Weil group ---")
+    gens = E.gens()
+    rank = E.rank()
+    print(f"Rank of E(Q): {rank}")
+    print(f"Generators found: {len(gens)}")
+    for i, P in enumerate(gens):
+        print(f"Generator {i+1}: {P}")
+except Exception as e:
+    print(f"Could not compute generators automatically: {e}")
+    gens = []
+
+print("=" * 80)
+
+# Method 2: Search for points with bounded height
+print("\n--- Searching for points with bounded height ---")
+bound = 10^6  # Search up to height 10^6
+print(f"Searching for points with naive height up to {bound}...")
+
+try:
+    points = E.point_search(bound, verbose=False)
+    print(f"Found {len(points)} points:")
+    for P in points[:20]:  # Show first 20 points
+        print(f"  {P}")
+    if len(points) > 20:
+        print(f"  ... and {len(points) - 20} more points")
+except Exception as e:
+    print(f"Point search error: {e}")
+    points = []
+
+print("=" * 80)
+
+# If we found generators or points, compute multiples
+if gens:
+    base_points = gens
+elif points:
+    base_points = [P for P in points if not P.is_zero() and P.height() < 100][:3]
+else:
+    base_points = []
+
+if base_points:
+    print("\n--- Computing Point Multiples ---")
+    for idx, P in enumerate(base_points[:3]):  # Work with up to 3 base points
+        print(f"\n{'='*80}")
+        print(f"BASE POINT #{idx+1}: P = {P}")
+        print(f"Height: {P.height()}")
+        print(f"{'='*80}")
+        
+        for k in range(1, 6):
+            kP = k * P
+            if not kP.is_zero():
+                x_coord = kP[0]
+                y_coord = kP[1]
+                
+                print(f"\n{k}P:")
+                print(f"  x = {x_coord}")
+                print(f"  y = {y_coord}")
+                
+                # Verify it's on the curve
+                lhs = y_coord^2
+                rhs = x_coord^3 + a*x_coord + b
+                if lhs == rhs:
+                    print(f"  ✓ Verified on curve")
+                else:
+                    print(f"  ✗ ERROR: Not on curve!")
+                
+                # Show decimal approximations if small enough
+                try:
+                    x_float = float(x_coord)
+                    y_float = float(y_coord)
+                    print(f"  ≈ ({x_float:.6f}, {y_float:.6f})")
+                except:
+                    pass
+            else:
+                print(f"\n{k}P: Point at infinity (O)")
+else:
+    print("\nNo non-trivial rational points found.")
+    print("Attempting alternative search methods...")
+    
+    # Try small rational points manually
+    print("\nSearching for small rational x-coordinates...")
+    found_any = False
+    for num in range(-100, 101):
+        for denom in range(1, 21):
+            if gcd(num, denom) == 1:
+                x = QQ(num) / QQ(denom)
+                y_squared = x^3 + a*x + b
+                if y_squared.is_square():
+                    y = y_squared.sqrt()
+                    P = E([x, y])
+                    print(f"Found point: {P}")
+                    found_any = True
+                    
+                    # Compute multiples
+                    print("\nMultiples:")
+                    for k in range(1, 6):
+                        kP = k * P
+                        print(f"  {k}P = {kP}")
+                    break
+            if found_any:
+                break
+        if found_any:
+            break
+
+print("\n" + "=" * 80)
+print("Computation complete!")

@@ -1,0 +1,33 @@
+\begin{conjecture}
+Let \(k, r \in \mathbb{Z}\) with \(r \neq 0\), and consider the elliptic curve \(E_{k,r}\) derived from the sum of three cubes equation \(x^3 + y^3 + z^3 = k\), given in the Weierstrass form:
+\[
+P^2 = u^3 - \frac{k r}{3} \cdot u - \left( \frac{r^6}{108} - \frac{k r^3}{18} - \frac{k^2}{36} \right).
+\]
+The point $ (\beta u, \beta P) = \left( \beta \cdot \dfrac{r^2}{3}, \dfrac{r^3 - k}{6} \cdot \beta\right)$ also lies on \(E_{k,r}\) for any $k$ where $\beta > 1$.
+
+The existence of this trivial point on \(E_{k,r}\) corresponds to the existence of infinite, parametric families of trivial solutions to the original equation \(x^3 + y^3 + z^3 = k\).
+\end{conjecture}
+
+\begin{proof}
+
+Given the equation:
+
+\begin{align} \label{2.140}
+        P^2 = u_2^3 - \dfrac{k \cdot r}{3} \cdot u_2 - (\dfrac{r^6}{108} - \dfrac{k \cdot r^3}{18} - \dfrac{k^2}{36})
+\end{align}
+
+Let $u_2 = \dfrac{ \beta \cdot r^2}{3}$ and substituted into the RHS of equation \eqref{2.118}
+
+\begin{align*} \label{2.119}
+        P^2 &= (\dfrac{ \beta \cdot r^2}{3})^3 - \dfrac{k \cdot r}{3} \cdot (\dfrac{ \beta \cdot r^2}{3}) - (\dfrac{r^6}{108} - \dfrac{k \cdot r^3}{18} - \dfrac{k^2}{36})\\
+        P^2 &= \dfrac{r^6 \cdot \beta^2}{27} - \dfrac{k r^3 \cdot \beta}{9} - (\dfrac{r^6}{108} - \dfrac{k \cdot r^3}{18} - \dfrac{k^2}{36})\\
+        P^2 &= \dfrac{r^6 \cdot (4\beta^2 - 1)}{108} + \dfrac{k \cdot r^3}{9} \cdot (\dfrac{1-2\beta}{2}) + \dfrac{k^2}{36} \\
+        P^2 &= \dfrac{r^6 \cdot (4\beta^2 - 1)}{108} + \dfrac{k r^3 \cdot (1-2\beta)}{18}  + \dfrac{k^2}{36} \\
+        P^2 &= \dfrac{r^6 -2k \cdot r^3 + k^2}{36}
+\end{align*}
+
+On taking square roots of both sides of the equation above,
+
+\begin{align*}
+    P = \dfrac{r^3 - k}{6} 
+\end{align*}

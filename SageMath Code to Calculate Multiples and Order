@@ -1,0 +1,182 @@
+# Calculate multiples of P and determine its order
+reset()
+n = var('n')
+
+print("CALCULATING MULTIPLES AND ORDER OF P_n")
+print("=" * 60)
+
+# Your elliptic curve
+A = -102*n - 51
+B = -(432*n^6 + 1296*n^5 + 1620*n^4 + 468*n^3 - 513*n^2 - 378*n - 142)
+
+# Your point P_n
+P_x = 3*(2*n + 1)^2
+P_y = 36*n^3 + 54*n^2 + 27*n - 4
+
+print(f"Curve: y² = x³ + ({A})x + ({B})")
+print(f"Point P_n = ({P_x}, {P_y})")
+print()
+
+# Strategy 1: Test with specific integer values of n
+print("STRATEGY 1: TEST WITH SPECIFIC INTEGER VALUES")
+print("-" * 40)
+
+def analyze_point_for_specific_n(n_val):
+    """Analyze the point P for a specific integer n"""
+    A_val = A.subs(n=n_val)
+    B_val = B.subs(n=n_val)
+    P_x_val = P_x.subs(n=n_val)
+    P_y_val = P_y.subs(n=n_val)
+    
+    print(f"\n--- n = {n_val} ---")
+    print(f"P = ({P_x_val}, {P_y_val})")
+    
+    try:
+        # Create elliptic curve
+        E = EllipticCurve(QQ, [0, 0, 0, A_val, B_val])
+        P_point = E(P_x_val, P_y_val)
+        
+        print(f"Elliptic curve: {E}")
+        print(f"Point on curve: {P_point}")
+        
+        # Calculate the order
+        order = P_point.order()
+        print(f"ORDER OF P: {order}")
+        
+        # Calculate multiples
+        print("Multiples of P:")
+        current = P_point
+        for k in range(1, min(order + 2, 12)):  # Show up to order+1 or 11
+            print(f"  {k}P = {current}")
+            if current == E(0):  # Point at infinity
+                print(f"  → {k}P is the identity (point at infinity)")
+                break
+            current = current + P_point
+            
+        # Additional curve information
+        print(f"Curve rank: {E.rank()}")
+        print(f"Torsion subgroup: {E.torsion_subgroup()}")
+        print(f"All torsion points: {E.torsion_points()}")
+        
+        return order
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+# Test for several n values
+test_values = [1, 2, 3, 4, 5, 77]
+orders = []
+for n_val in test_values:
+    order = analyze_point_for_specific_n(n_val)
+    if order is not None:
+        orders.append(order)
+
+print(f"\nOrders found: {orders}")
+
+# Strategy 2: Symbolic computation to find the order pattern
+print("\n" + "="*60)
+print("STRATEGY 2: SYMBOLIC COMPUTATION OF 2P")
+print("-" * 40)
+
+def compute_2P_symbolic():
+    """Compute 2P symbolically using group law formulas"""
+    print("Computing 2P symbolically...")
+    
+    x1, y1 = P_x, P_y
+    
+    # Point doubling formulas
+    # λ = (3x₁² + A) / (2y₁)
+    # x₃ = λ² - 2x₁
+    # y₃ = λ(x₁ - x₃) - y₁
+    
+    try:
+        # Compute slope
+        numerator = 3*x1^2 + A
+        denominator = 2*y1
+        lam = numerator / denominator
+        
+        print(f"Slope λ = {lam}")
+        
+        # Compute 2P coordinates
+        x3 = lam^2 - 2*x1
+        y3 = lam*(x1 - x3) - y1
+        
+        print(f"2P = ({x3}, {y3})")
+        
+        # Simplify
+        x3_simple = x3.full_simplify()
+        y3_simple = y3.full_simplify()
+        
+        print(f"2P (simplified) = ({x3_simple}, {y3_simple})")
+        
+        # Check if 2P = P (would indicate order 2)
+        if x3_simple == P_x and y3_simple == P_y:
+            print("🎯 2P = P → Order is 2")
+        # Check if 2P = -P (would indicate order 3)  
+        elif x3_simple == P_x and y3_simple == -P_y:
+            print("🎯 2P = -P → Order is 3")
+        else:
+            print("P does not have small order (2 or 3)")
+            
+        return (x3_simple, y3_simple)
+        
+    except Exception as e:
+        print(f"Symbolic computation error: {e}")
+        return None
+
+compute_2P_symbolic()
+
+# Strategy 3: Check if P is a torsion point by specialization
+print("\n" + "="*60)
+print("STRATEGY 3: CHECKING FOR FINITE ORDER PATTERN")
+print("-" * 40)
+
+print("Testing more n values to see order pattern:")
+more_test_values = range(1, 20)
+order_pattern = []
+
+for n_val in more_test_values:
+    try:
+        A_val = A.subs(n=n_val)
+        B_val = B.subs(n=n_val)
+        E = EllipticCurve(QQ, [0, 0, 0, A_val, B_val])
+        P_point = E(P_x.subs(n=n_val), P_y.subs(n=n_val))
+        order = P_point.order()
+        order_pattern.append((n_val, order))
+        print(f"n={n_val}: order={order}")
+    except:
+        order_pattern.append((n_val, "Error"))
+        print(f"n={n_val}: Error")
+
+print(f"\nOrder pattern: {order_pattern}")
+
+# Strategy 4: Check if P is in the torsion subgroup
+print("\n" + "="*60)
+print("STRATEGY 4: CHECKING IF P IS A TORSION POINT")
+print("-" * 40)
+
+def check_if_torsion_point(n_val):
+    """Check if P is in the torsion subgroup"""
+    try:
+        A_val = A.subs(n=n_val)
+        B_val = B.subs(n=n_val)
+        E = EllipticCurve(QQ, [0, 0, 0, A_val, B_val])
+        P_point = E(P_x.subs(n=n_val), P_y.subs(n=n_val))
+        
+        # Get all torsion points
+        torsion_points = E.torsion_points()
+        
+        print(f"n={n_val}:")
+        print(f"  P = {P_point}")
+        print(f"  P in torsion subgroup: {P_point in torsion_points}")
+        if P_point in torsion_points:
+            print(f"  → P is a TORSION point (finite order)")
+        else:
+            print(f"  → P has INFINITE order")
+            
+    except Exception as e:
+        print(f"n={n_val}: Error - {e}")
+
+for n_val in [1, 2, 3, 4, 5, 77]:
+    check_if_torsion_point(n_val)

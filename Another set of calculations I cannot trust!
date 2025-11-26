@@ -1,0 +1,93 @@
+We then consider the following points:
+
+\begin{align*}
+(u_{G}, P_{G}) &= \left(3(2n + 1)^2,\ 36n^3 + 54n^2 + 27n - 4\right) \\
+(u_{2G}, P_{2G}) &= \left(3(2n + 1)^2 \cdot k_1,\ (36n^3 + 54n^2 + 27n - 4) \cdot k_2\right)
+\end{align*}
+
+where $k_1$ and $k_2$ are scalar coefficients such that $k_1 \neq k_2$ and $k_1, k_2 \geq 2$.
+
+\subsubsection{Point Addition Formulas}
+
+For the elliptic curve in Weierstrass form:
+\[
+y^2 = x^3 + ax + b
+\]
+
+The slope for point addition is:
+\[
+\lambda = \frac{y_2 - y_1}{x_2 - x_1} = \frac{(36n^3 + 54n^2 + 27n - 4) \cdot (k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}
+\]
+
+The coordinates of the sum $(x_3, y_3) = (x_1, y_1) + (x_2, y_2)$ are:
+\begin{align*}
+u_{3G} &= \lambda^2 - x_1 - x_2 \\
+&= \left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 - 3(2n + 1)^2(1 + k_1) \\
+P_{3G} &= \lambda(x_1 - x_3) - y_1 \\
+&= \dfrac{(36n^3 + 54n^2 + 27n - 4) \cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)} \cdot \left(3(2n + 1)^2 - u_{3G}\right) - (36n^3 + 54n^2 + 27n - 4)
+\end{align*}
+
+Given that $X = u_{3G} - \dfrac{r^2}{3}$
+
+\begin{align*}
+  X &= \left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 - 3(2n + 1)^2 \cdot (1 + k_1) - 3 \cdot (2n+1)^2 \\
+    &= \left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 - 3(2n + 1)^2 \cdot \left(2 + k_1\right) \\
+\end{align*}
+
+given $Q \rightarrow -X$ from page 4 of the derivation, $X \rightarrow -Q$, thus:
+
+\begin{align*}
+  -Q &= \left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 - 3(2n + 1)^2 \cdot (1 + k_1) - 3 \cdot (2n+1)^2 \\
+    &= \left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 - 3(2n + 1)^2 \cdot \left(2 + k_1\right) \\
+\end{align*}
+
+\begin{equation} \label{6.1}
+  Q = -\left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 + 3(2n + 1)^2 \cdot \left(2 + k_1\right) \\
+\end{equation}
+
+Given also that $Q = 2 \cdot q$, equation \eqref{6.1} can be re-expressed as:
+
+\begin{equation} \label{6.2}
+ 2 \cdot q  = -\left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 + 3(2n + 1)^2 \cdot \left(2 + k_1\right) \\
+\end{equation}
+
+From equation \eqref{1.21}
+
+\begin{equation*} 
+    z_{1}= r - \frac{ (r^{3} - k)}{6q}
+\end{equation*}
+
+\begin{equation*} 
+    z_{1}= (6n+3) - \frac{ 2 \cdot (36n^3 + 54n^2 + 27n - 4)}{-\left(\dfrac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 + 3(2n + 1)^2 \cdot \left(2 + k_1\right)}
+\end{equation*}
+
+\begin{equation*} \label{6.8}
+    x = \dfrac{(36n^3 + 54n^2 + 27n - 4) + \left[\dfrac{(36n^3 + 54n^2 + 27n - 4) \cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)} \cdot \left(3(2n + 1)^2 - u_{3G}\right) - (36n^3 + 54n^2 + 27n - 4)\right]}{-\left(\dfrac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 + 3(2n + 1)^2 \cdot \left(2 + k_1\right)}
+\end{equation*}
+
+\begin{equation*} \label{6.9}
+    y = \dfrac{(36n^3 + 54n^2 + 27n - 4) - \left[\dfrac{(36n^3 + 54n^2 + 27n - 4) \cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)} \cdot \left(3(2n + 1)^2 - u_{3G}\right) - (36n^3 + 54n^2 + 27n - 4)\right]}{-\left(\dfrac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 + 3(2n + 1)^2 \cdot \left(2 + k_1\right)}
+\end{equation*}
+
+given that 
+
+\begin{equation*}
+    u_{3G} =  \left(\frac{(36n^3 + 54n^2 + 27n - 4)\cdot(k_2 - 1)}{3(2n + 1)^2 \cdot (k_1 - 1)}\right)^2 - 3(2n + 1)^2(1 + k_1) 
+\end{equation*}
+\subsection*{Special Cases}
+
+\subsubsection*{Case 1: $k_1 = 1$}
+If $k_1 = 1$, then $x_1 = x_2$ and we have:
+\begin{itemize}
+    \item If $k_2 = 1$, then $y_1 = y_2$ and we perform point doubling
+    \item If $k_2 = -1$, then $y_2 = -y_1$ and $(x_1, y_1) + (x_1, -y_1) = \mathcal{O}$ (point at infinity)
+    \item If $k_2 \neq \pm 1$, the points are vertical and sum to $\mathcal{O}$
+\end{itemize}
+
+\subsubsection*{Case 2: $k_2 = 1$}
+If $k_2 = 1$, then $y_1 = y_2$:
+\begin{itemize}
+    \item If $k_1 = 1$, we have identical points (point doubling)
+    \item If $k_1 \neq 1$, the points are symmetric about a horizontal line
+\end{itemize}
+

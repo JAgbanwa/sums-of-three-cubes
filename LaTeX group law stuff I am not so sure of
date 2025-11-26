@@ -1,0 +1,79 @@
+The slope for point doubling:
+
+\begin{align*}
+\lambda_{2G} &= \dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}
+\end{align*}
+
+Coordinates of $2G$:
+\begin{align*}
+    u_{2G} &= \left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2(36n^3 + 54n^2 + 27n - 4)}\right)^2 - 6(2n + 1)^2 
+\end{align*}
+
+
+\begin{align*}
+    P_{2G} &= \dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2(36n^3 + 54n^2 + 27n - 4)} \cdot \left(3(2n + 1)^2 - u_{2G} \right) - (36n^3 + 54n^2 + 27n - 4)\\
+\end{align*}
+
+
+\subsubsection*{Point $4G = 2G + 2G$:}
+\begin{dmath}
+\lambda_{4G} = \frac{3(u_{2G})^2 + A}{2P_{2G}}
+\end{dmath}
+
+\begin{dmath}
+u_{4G} = (\lambda_{4G})^2 - 2u_{2G}
+\end{dmath}
+
+\begin{dmath}
+P_{4G} = \lambda_{4G}(u_{2G} - u_{4G}) - P_{2G}
+\end{dmath}
+
+Given that $X = u_{2G} - \dfrac{r^2}{3}$,
+
+\begin{align*}
+    X &= \left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2(36n^3 + 54n^2 + 27n - 4)}\right)^2 - 9 \cdot (2n + 1)^2
+\end{align*}
+
+given $Q \rightarrow -X$ from page 4 of the derivation, $X \rightarrow -Q$, thus:
+
+\begin{align*}
+    -Q &= \left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2(36n^3 + 54n^2 + 27n - 4)}\right)^2 - 9 \cdot (2n + 1)^2
+\end{align*}
+
+\begin{align} \label{6.4}
+    Q &= -\left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\right)^2 + 9 \cdot (2n + 1)^2
+\end{align}
+
+Given also that $Q = 2 \cdot q$, equation \eqref{6.4} can be re-expressed as:\\
+
+\begin{align} \label{6.5}
+    2 \cdot q &= -\left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\right)^2 + 9 \cdot (2n + 1)^2
+\end{align}
+
+\begin{align} \label{6.6}
+  q &= -\dfrac{1}{2} \cdot \left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\right)^2 + \dfrac{9}{2} \cdot (2n + 1)^2
+\end{align}
+
+From equation \eqref{1.21}
+
+\begin{equation*} 
+    z_{1}=\frac{6q\cdot r - (r^{3} - k)}{6q}
+\end{equation*}
+
+\begin{equation*} \label{6.7}
+    z_{1}= (6n+3) - \frac{ 2 \cdot (36n^3 +54n^2 + 27n - 4)}{-\left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\right)^2 + 9 \cdot (2n + 1)^2}
+\end{equation*}
+
+\begin{equation*} \label{6.8}
+    x = \dfrac{(36n^3 + 54n^2 + 27n - 4) + \left[\dfrac{27 \cdot(2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)} \cdot \left(3 \cdot (2n + 1)^2 -  u_{2G} \right) - (36n^3 + 54n^2 + 27n - 4)\right]}{-\left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\right)^2 + 9 \cdot (2n + 1)^2}
+\end{equation*}
+
+\begin{equation*} \label{6.9}
+    y = \dfrac{(36n^3 + 54n^2 + 27n - 4) - \left[ \dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\cdot \left(3 \cdot (2n + 1)^2 -  u_{2G} \right) - (36n^3 + 54n^2 + 27n - 4)\right]}{-\left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2 \cdot (36n^3 + 54n^2 + 27n - 4)}\right)^2 + 9 \cdot (2n + 1)^2}
+\end{equation*}
+
+given that 
+
+\begin{equation*}
+    u_{2G} = \left(\dfrac{27 \cdot (2n + 1)^4 + (-102n - 51)}{2(36n^3 + 54n^2 + 27n - 4)}\right)^2 - 6(2n + 1)^2 
+\end{equation*}

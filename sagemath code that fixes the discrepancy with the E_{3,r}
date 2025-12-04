@@ -1,0 +1,41 @@
+# SageMath (run inside sage or sagecell)
+R.<n> = QQ[]                     # polynomial ring in n
+K = R.fraction_field()           # field QQ(n)
+
+# big integer u2 (exact)
+u2_val = Integer(324827831149539837879950228963310467042555)
+
+# define polynomial ring for symbolic p-coordinates (we will set u1=2, u2=u2_val)
+L.<u1,p1,u2,p2> = PolynomialRing(K)
+
+# elliptic curve polynomial in variables U,P
+E_poly = lambda Uv, Pv: Pv^2 - (Uv^3 - (6*n + 3)*Uv - (432*n^6 + 1296*n^5 + 1620*n^4 + 1044*n^3 + 351*n^2 + 54*n + 2))
+
+# form quotient by the two point-on-curve relations
+M = L.quotient([E_poly(u1,p1), E_poly(u2,p2)], names=('u1','p1','u2','p2'))
+m_u1, m_p1, m_u2, m_p2 = M.gens()
+
+F = M.fraction_field()           # fraction field where coordinates live
+
+# coefficients of E over F
+A = -(6*n + 3)
+B = -(432*n^6 + 1296*n^5 + 1620*n^4 + 1044*n^3 + 351*n^2 + 54*n + 2)
+E = EllipticCurve(F, [0,0,0,A,B])
+
+# construct points: set u1 = 2, substitute u2 with numeric u2_val by replacing generator
+P1 = E(F)(m_u1, m_p1)            # symbolic P1 (u1,p1)
+P2 = E(F)(m_u2, m_p2)            # symbolic P2 (u2,p2)
+
+# Now substitute u1 -> 2 and u2 -> u2_val in the fraction-field expressions for P1 and P2
+subs_map = {m_u1: F(2), m_u2: F(u2_val)}
+P1s = E(F)(P1[0].subs(subs_map), P1[1].subs(subs_map))
+P2s = E(F)(P2[0].subs(subs_map), P2[1].subs(subs_map))
+
+# compute sum
+P3 = P1s + P2s
+u3 = P3[0]; p3 = P3[1]
+
+print("u3 =")
+print(u3)   # rational function in n and the symbolic p1,p2 (p1,p2 remain symbolic sqrt expressions)
+print("\np3 =")
+print(p3)

@@ -1,0 +1,137 @@
+import sys
+from sage.all import *
+
+def verify_elliptic_curve_formulas(n):
+    """Verify the elliptic curve addition formulas for given n."""
+    
+    # Define B (from the elliptic curve equation)
+    B = -(432*n**6 + 1296*n**5 + 1620*n**4 + 1044*n**3 + 351*n**2 + 54*n + 2)
+    A = -6*n - 3
+    
+    # Points P1 = (u1, y1)
+    u1 = 2
+    y1 = sqrt(u1**3 + A*u1 + B)
+    
+    # Point P2 = (u2, y2) - u2 is a huge integer
+    u2_str = "324827831149539837879950228963310467042555"
+    u2 = Integer(u2_str)
+    y2 = sqrt(u2**3 + A*u2 + B)
+    
+    # Calculate λ using standard formula
+    λ_standard = (y2 - y1) / (u2 - u1)
+    
+    # Calculate u3 and y3 using standard formulas
+    u3_standard = λ_standard**2 - u1 - u2
+    y3_standard = λ_standard * (u1 - u3_standard) - y1
+    
+    print("=" * 80)
+    print(f"Results for n = {n}:")
+    print(f"A = {A}, B = {B}")
+    print(f"P1 = ({u1}, {y1})")
+    print(f"P2 = ({u2}, {y2})")
+    
+    # Now calculate using your formulas
+    denominator_str = "324827831149539837879950228963310467042553"
+    denominator = Integer(denominator_str)
+    
+    # Your formula for λ
+    λ_your = (sqrt(u2**3 + A*u2 + B) - sqrt(u1**3 + A*u1 + B)) / denominator
+    
+    # Your formula for u3
+    u3_your = λ_your**2 - Integer("324827831149539837879950228963310467042557")
+    
+    # Your formula for y3
+    y3_your = λ_your * (2 - u3_your) - y1
+    
+    print("\nStandard formulas:")
+    print(f"λ = (y2 - y1)/(u2 - u1) = {λ_standard}")
+    print(f"u3 = λ² - u1 - u2 = {u3_standard}")
+    print(f"y3 = λ(u1 - u3) - y1 = {y3_standard}")
+    
+    print("\nYour formulas:")
+    print(f"λ = (√(u2³+Au2+B) - √(u1³+Au1+B)) / {denominator} = {λ_your}")
+    print(f"u3 = λ² - 324827831149539837879950228963310467042557 = {u3_your}")
+    print(f"y3 = λ(2 - u3) - y1 = {y3_your}")
+    
+    print("\nVerification:")
+    print(f"λ matches: {λ_standard == λ_your}")
+    print(f"u3 matches: {u3_standard == u3_your}")
+    print(f"y3 matches: {y3_standard == y3_your}")
+    
+    if λ_standard == λ_your:
+        print("✓ λ calculation is correct!")
+    else:
+        print("✗ λ calculation differs")
+        print(f"  Difference: {λ_standard - λ_your}")
+    
+    if u3_standard == u3_your:
+        print("✓ u3 calculation is correct!")
+    else:
+        print("✗ u3 calculation differs")
+        print(f"  Standard: {u3_standard}")
+        print(f"  Your: {u3_your}")
+        print(f"  Difference: {u3_standard - u3_your}")
+    
+    if y3_standard == y3_your:
+        print("✓ y3 calculation is correct!")
+    else:
+        print("✗ y3 calculation differs")
+        print(f"  Difference: {y3_standard - y3_your}")
+    
+    # Additional check: verify P3 lies on the curve
+    if u3_standard**3 + A*u3_standard + B == y3_standard**2:
+        print("✓ P3 = (u3, y3) satisfies the elliptic curve equation!")
+    else:
+        print("✗ P3 does not satisfy the elliptic curve equation!")
+    
+    return λ_standard, u3_standard, y3_standard, λ_your, u3_your, y3_your
+
+# Test for n = 1 to 3 (or more if you want)
+print("Verifying elliptic curve addition formulas")
+print("=" * 80)
+
+for n in range(1, 4):
+    try:
+        print(f"\nTesting n = {n}")
+        results = verify_elliptic_curve_formulas(n)
+        
+    except Exception as e:
+        print(f"Error for n = {n}: {e}")
+        import traceback
+        traceback.print_exc()
+
+# Let's also check the relationship between the constants
+print("\n" + "=" * 80)
+print("Checking the relationship between constants:")
+u2_str = "324827831149539837879950228963310467042555"
+u2 = Integer(u2_str)
+denom_str = "324827831149539837879950228963310467042553"
+denom = Integer(denom_str)
+const_str = "324827831149539837879950228963310467042557"
+constant = Integer(const_str)
+
+print(f"u2 = {u2}")
+print(f"denominator = {denom}")
+print(f"constant in u3 formula = {constant}")
+print(f"u2 - denominator = {u2 - denom} = 2")
+print(f"constant - u2 = {constant - u2} = 2")
+print(f"So constant = u2 + 2")
+print(f"And denominator = u2 - 2")
+
+print("\n" + "=" * 80)
+print("Analysis:")
+print("Your λ formula has denominator (u2 - 2) instead of (u2 - u1)")
+print("Since u1 = 2, this means your denominator is (u2 - 2) = (u2 - u1)")
+print("So your λ formula is actually: λ = (y2 - y1)/(u2 - 2)")
+print("But since u1 = 2, this is equivalent to λ = (y2 - y1)/(u2 - u1)")
+print("So your λ formula is CORRECT!")
+
+print("\nFor u3: standard formula is u3 = λ² - u1 - u2 = λ² - 2 - u2")
+print("Your formula: u3 = λ² - (u2 + 2) = λ² - u2 - 2")
+print("So your u3 formula is also CORRECT!")
+
+print("\nFor y3: standard formula is y3 = λ(u1 - u3) - y1 = λ(2 - u3) - y1")
+print("Your formula: y3 = λ(2 - u3) - y1")
+print("So your y3 formula is also CORRECT!")
+
+print("\nConclusion: All your formulas are mathematically correct!")

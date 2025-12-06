@@ -1,0 +1,166 @@
+"""
+SageMath code to verify the elliptic curve formulas and test
+whether x(n)^3 + y(n)^3 + z(n)^3 = 3
+"""
+
+def test_sum_of_cubes(n):
+    """
+    Test whether x(n)^3 + y(n)^3 + z(n)^3 = 3 for a given n
+    """
+    print(f"\n{'='*70}")
+    print(f"Testing with n = {n}")
+    print('='*70)
+    
+    # Define the curve parameters
+    A = -6*n - 3
+    B = -(432*n^6 + 1296*n^5 + 1620*n^4 + 1044*n^3 + 351*n^2 + 54*n + 2)
+    
+    print(f"A = {A}")
+    print(f"B = {B}")
+    
+    # Define the elliptic curve over QQbar
+    E = EllipticCurve(QQbar, [A, B])
+    
+    # Calculate the first point (u_1, y_1)
+    u_1 = 2
+    y_1_squared = u_1^3 + A*u_1 + B
+    
+    # Check if y_1 is real
+    if y_1_squared < 0:
+        print(f"ERROR: y_1² = {y_1_squared} < 0, point P1 is not real!")
+        return None
+    
+    y_1 = sqrt(QQbar(y_1_squared))
+    P1 = E([u_1, y_1])
+    
+    print(f"P1 = (2, sqrt({y_1_squared}))")
+    print(f"P1 on curve: {E.is_on_curve(u_1, y_1)}")
+    
+    # Calculate the second point (u_2, y_2)
+    u_2 = 324827831149539837879950228963310467042555
+    y_2_squared = u_2^3 + A*u_2 + B
+    
+    # Check if y_2 is real
+    if y_2_squared < 0:
+        print(f"ERROR: y_2² < 0, point P2 is not real!")
+        return None
+    
+    y_2 = sqrt(QQbar(y_2_squared))
+    P2 = E([u_2, y_2])
+    
+    print(f"P2 on curve: {E.is_on_curve(u_2, y_2)}")
+    
+    # Calculate lambda (the slope)
+    lambda_val = (sqrt(QQbar(u_2^3 + u_2*A + B)) - sqrt(QQbar(2^3 + 2*A + B))) / 324827831149539837879950228963310467042553
+    
+    # Calculate (u_3, y_3) using the given formulas
+    u_3 = lambda_val^2 - u_1 - u_2
+    y_3 = lambda_val * (u_1 - u_3) - y_1
+    
+    print(f"\nu_3 = {u_3}")
+    print(f"y_3 (numerical) ≈ {complex(y_3).real if abs(complex(y_3).imag) < 1e-10 else y_3}")
+    
+    # Verify with SageMath's addition
+    P3_sage = P1 + P2
+    print(f"\nSageMath verification: P3 = P1 + P2")
+    print(f"u_3 matches: {abs(u_3 - P3_sage[0]) < 1e-10}")
+    print(f"y_3 matches: {abs(y_3 - P3_sage[1]) < 1e-10}")
+    
+    # Now calculate x, y, z
+    Q = -u_3 + 3*(2*n+1)^2
+    
+    print(f"\nQ = -u_3 + 3(2n+1)² = -u_3 + 3·{(2*n+1)^2} = {Q}")
+    
+    numerator_term = 36*n^3 + 54*n^2 + 27*n + 4
+    print(f"Numerator term = 36n³ + 54n² + 27n + 4 = {numerator_term}")
+    
+    x = (numerator_term + y_3) / Q
+    y = (numerator_term - y_3) / Q
+    z = (6*n + 3) - 2*numerator_term / Q
+    
+    print(f"\nx = ({numerator_term} + y_3) / Q")
+    print(f"y = ({numerator_term} - y_3) / Q")
+    print(f"z = {6*n+3} - 2·{numerator_term} / Q")
+    
+    # Try to get numerical values
+    try:
+        x_val = complex(x)
+        y_val = complex(y)
+        z_val = complex(z)
+        
+        # Check if values are essentially real
+        if abs(x_val.imag) < 1e-10 and abs(y_val.imag) < 1e-10 and abs(z_val.imag) < 1e-10:
+            x_real = x_val.real
+            y_real = y_val.real
+            z_real = z_val.real
+            print(f"\nx ≈ {x_real}")
+            print(f"y ≈ {y_real}")
+            print(f"z ≈ {z_real}")
+        else:
+            print(f"\nx = {x}")
+            print(f"y = {y}")
+            print(f"z = {z}")
+    except:
+        print(f"\nx = {x}")
+        print(f"y = {y}")
+        print(f"z = {z}")
+    
+    # Calculate the sum of cubes
+    sum_of_cubes = x^3 + y^3 + z^3
+    
+    print(f"\n{'*'*70}")
+    print(f"x³ + y³ + z³ = {sum_of_cubes}")
+    
+    try:
+        sum_numerical = complex(sum_of_cubes)
+        if abs(sum_numerical.imag) < 1e-10:
+            sum_real = sum_numerical.real
+            diff = abs(sum_real - 3)
+            print(f"Numerical value ≈ {sum_real}")
+            print(f"Difference from 3: {diff:.2e}")
+            print(f"Equals 3? {diff < 1e-10}")
+        else:
+            print(f"Sum has significant imaginary component: {sum_numerical}")
+    except:
+        try:
+            diff = abs(sum_of_cubes - 3)
+            print(f"Difference from 3: {diff}")
+            print(f"Equals 3? {diff < 1e-10}")
+        except:
+            print(f"Cannot compute numerical difference")
+    
+    print('*'*70)
+    
+    return sum_of_cubes
+
+# Test for multiple values of n
+print("TESTING SUM OF CUBES: x³ + y³ + z³ = 3?")
+print("="*70)
+
+results = {}
+for n_val in [1, 2, 3, 4, 5, 10]:
+    try:
+        sum_val = test_sum_of_cubes(n_val)
+        results[n_val] = sum_val
+    except Exception as e:
+        print(f"\nError for n={n_val}: {e}")
+        results[n_val] = None
+
+# Summary
+print("\n\n" + "="*70)
+print("SUMMARY OF RESULTS")
+print("="*70)
+for n_val, sum_val in results.items():
+    if sum_val is not None:
+        try:
+            sum_numerical = complex(sum_val)
+            if abs(sum_numerical.imag) < 1e-10:
+                diff = abs(sum_numerical.real - 3)
+                status = "✓ PASS" if diff < 1e-8 else "✗ FAIL"
+                print(f"n={n_val}: x³+y³+z³ ≈ {sum_numerical.real:.10f}, diff = {diff:.2e} {status}")
+            else:
+                print(f"n={n_val}: Sum is complex: {sum_numerical}")
+        except:
+            print(f"n={n_val}: x³+y³+z³ = {sum_val}")
+    else:
+        print(f"n={n_val}: ERROR - point not real or computation failed")

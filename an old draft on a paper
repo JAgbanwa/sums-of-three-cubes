@@ -1,0 +1,292 @@
+\subsection{Group Law Formulas}
+
+For an elliptic curve $E: y^2 = x^3 + Ax + B$:
+
+\subsubsection{Point Doubling: $P + P = 2P$}
+
+Let $P = (x_1, y_1)$ be a point on $E$ with $y_1 \neq 0$. Then $2P = (x_3, y_3)$ is computed as:
+
+\begin{align*}
+\lambda &= \frac{3x_1^2 + A}{2y_1} \\
+x_3 &= \lambda^2 - 2x_1 \\
+y_3 &= \lambda(x_1 - x_3) - y_1
+\end{align*}
+
+\subsubsection{Point Addition: $P + Q = R$} 
+For $P = (x_1, y_1)$, $Q = (x_2, y_2)$ with $x_1 \neq x_2$:
+\begin{align*}
+\lambda &= \frac{y_2 - y_1}{x_2 - x_1} \\
+x_3 &= \lambda^2 - x_1 - x_2 \\
+y_3 &= \lambda(x_1 - x_3) - y_1
+\end{align*}
+
+\subsubsection*{Special Cases}
+\begin{itemize}
+    \item Identity: $P + \mathcal{O} = P$
+    \item Inverse: $-P = (x_1, -y_1)$  
+    \item Vertical: $P + (-P) = \mathcal{O}$
+\end{itemize}
+
+\subsection{when $k = 51$}
+
+\subsubsection*{Point addition for $k = 51$}
+
+For $k = 51$, the corresponding elliptic curve equation is:
+
+\begin{align*}
+    E_{51,r}: P^2 = u^3 + A u + B
+\end{align*}
+
+
+where
+
+\begin{align*}
+    A = -102n - 51
+\end{align*}
+
+\begin{align*}
+   B &= -\left(\frac{r^6}{108} - \frac{51r^3}{18} - \frac{2601}{36}\right)\\
+     &= -(432n^6 + 1296n^5 + 1620n^4 + 468n^3 - 513n^2 - 378n - 142)
+\end{align*}
+given equation \eqref{2.117}.
+
+The slope for point addition:
+
+\begin{align*}
+\lambda &= \frac{y_2 - y_1}{x_2 - x_1} \\
+\end{align*}
+
+where as a test case, 
+
+\begin{align*}
+    (u_1, P_1) &= \biggl(45497, \sqrt{45497^3 + 45497 \cdot (-102n - 51) -(432n^6 + 1296n^5 + 1620n^4 + 468n^3 - 513n^2 - 378n - 142)}\biggl)
+\end{align*}
+
+It would be observed that at $n = 77$, for instance, the terms assigned for $P_1$ simplify to $757473$.
+
+When we study Bernstein's list, \cite{Bernstein_2001}, another possible set of integer solutions for $k = 51$ is when $n = -21406$. Below is a simple proof:
+
+\begin{proof}
+Given:
+\begin{align*}
+    886475^3 + (-129352)^3 + (-885556)^3 = 51
+\end{align*}
+\begin{align*}
+       886475 -129352 -885556 = -128433
+\end{align*}
+
+Remember $r = 6n + 3$
+
+Thus;
+
+\begin{align*}
+    6n+3 &= -128433\\
+    n = -21406
+\end{align*}
+
+\end{proof}
+
+\begin{align*}
+    q_1 &= \frac{((886475-129352)\cdot ((-885556)-129352))}{2}\\
+      &= -384205094842\\
+    Q_2 &= 2q_2 = -768410189684
+\end{align*}
+
+Since $Q \rightarrow -X$ and $X = u - 3(2n+1)^2$,
+
+\begin{align*}
+    u_2 &= X + 3(2n+1)^2\\
+        &= 768410189684 + 3(2(-21406)+1)^2\\
+        &= 773908534847
+\end{align*}
+
+With this value for $u_2$, below is another set of points:
+
+\begin{align*}
+    u_2 &= 773908534847\\
+    P_2 &= \sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) -(432n^6 + 1296n^5 + 1620n^4 + 468n^3 - 513n^2 - 378n - 142)}
+\end{align*}
+
+\begin{align*}
+    \lambda &= \dfrac{\sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) + B} - \sqrt{45497^3 + 45497 \cdot (-102n - 51) + B}}{773908534847 - 45497}\\
+           &= \dfrac{\sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) + B} - \sqrt{45497^3 + 45497 \cdot (-102n - 51) + B}}{773908489350}\\
+\end{align*}
+
+\noindent
+\begin{align*}
+    u_3 &= \biggl(\dfrac{\sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) + B} - \sqrt{45497^3 + 45497 \cdot (-102n - 51) + B}}{773908489350} \biggl)^2 - u_1 - u_2
+\end{align*}
+
+where $- u_1 - u_2 = -773908580344$.\\
+ 
+\begin{align*}
+   P_3 &= \biggl(\dfrac{\sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) + B} - \sqrt{45497^3 + 45497 \cdot (-102n - 51) + B}}{773908489350}\biggl)\cdot(u_1 - u_3) - P_1
+\end{align*}
+
+
+For the problem $x^3 + y^3 + z^3 = 51$,
+
+\begin{align*}
+    x = \dfrac{(36n^3 + 54n^2 + 27n - 4) + P_3}{Q} 
+\end{align*}
+\begin{align*}
+    y = \dfrac{(36n^3 + 54n^2 + 27n - 4) - P_3}{Q}
+\end{align*}
+\begin{align*}
+    z = (6n+3)-\dfrac{2 \cdot (36n^3 + 54n^2 + 27n - 4)}{Q}
+\end{align*}
+
+Recall that:\\
+\noindent
+\begin{multline*}
+X = u_3 - 3(2n+1)^2\\
+= \biggl(\dfrac{\sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) + B} - \sqrt{45497^3 + 45497 \cdot (-102n - 51) + B}}{773908489350} \biggl)^2 - u_1 -u_2 \\
+-3\cdot(2n+1)^2
+\end{multline*}
+    
+\begin{multline*}
+Q = -u_3 + 3(2n+1)^2\\
+= -\biggl(\dfrac{\sqrt{773908534847^3 + 773908534847 \cdot (-102n - 51) + B} - \sqrt{45497^3 + 45497 \cdot (-102n - 51) + B}}{773908489350} \biggl)^2 + u_1 + u_2 \\
++3\cdot(2n+1)^2
+\end{multline*}
+  
+The validity of these formulas were tested with \href{https://github.com/JAgbanwa/sums-of-three-cubes/blob/main/A%20proof%20that%20works!}{these SageMath codes}.
+
+
+
+
+\subsection{when $k = 3$}
+
+
+The case of $k = 3$ is a solved case with known results to be 
+
+$(x,y,z)=(1,1,1) (4,4,-5) ( 569936821221962380720, -569936821113563493509, -472715493453327032)$
+
+The corresponding elliptic curve equation for $k = 3$ given the equation \eqref{2.117} is:
+
+\begin{align*}
+    E_{3,r}: P^2 = u^3 + A u + B
+\end{align*}
+
+
+where
+
+\begin{align*}
+    A = -6n - 3
+\end{align*}
+
+\begin{align*}
+   B &= -\left(\frac{(6n+3)^6}{108} - \frac{3 \cdot (6n+3)^3}{18} - \frac{9}{36}\right)\\
+     &= -(432n^6 + 1296n^5 + 1620n^4 + 1044n^3 + 351n^2 + 54n + 2)
+\end{align*}
+given equation \eqref{2.117}.
+
+The priority for choosing $(u_1, P_1)$ and $(u_2, P_2)$ will be placed on non-trivial solutions for $3$, for instance, solutions other than $(1,1,1)$. 
+As a test case, we find $n$ for which integer solutions, as stated, were yielded:\\
+
+\subsubsection{Determining $(u_1, P_1)$ and $(u_2, P_2)$}
+
+For $(x_1,y_1,z_1) = (4,4,-5)$
+
+\begin{align*}
+    x+y+z &= 6n+3\\
+    6n+3  &= 3 \\
+    n &= 0
+\end{align*}
+
+Recall that $Q = -u_1 + 3(2n+1)^2$. $Q$ can be determined with the equation:
+
+\begin{align*}
+    Q &= (x+z)(y+z)\\
+      &= (4-5)\cdot(4-5)\\
+      &= 1
+\end{align*}
+\begin{align*}
+    u_1 &= 3(2n+1)^2 - Q\\
+        &= 2
+\end{align*} 
+
+\begin{align*}
+    (u_1, P_1) = \left(2, \sqrt{2^3 + 2\cdot (-6n - 3) - (432n^6 + 1296n^5 + 1620n^4 + 1044n^3 + 351n^2 + 54n + 2)}\right)
+\end{align*}
+
+
+For $(x_2,y_2,z_2) = (569936821221962380720, -569936821113563493509, -472715493453327032)$
+
+\begin{align*}
+    x+y+z &= 6n+3\\
+    6n+3  &= 569936821221962380720 -569936821113563493509 -472715493453327032  \\
+    6n+3  &= -472715385054439821\\
+       n  &= -78785897509073304
+\end{align*}
+
+Recall that $Q = -u_1 + 3(2n+1)^2$. $Q$ can be determined with the equation:
+
+\begin{align*}
+    Q &= (x+z)(y+z)\\
+      &= (569936821221962380720-472715493453327032)\cdot(-569936821113563493509-472715493453327032)\\
+      &= -324827756662928082157514599078022430205208
+\end{align*}
+\begin{align*}
+    u_2 &= 3(2n+1)^2 - Q\\
+        &= 3(2(-78785897509073304)+1)^2 - (-324827756662928082157514599078022430205208)\\
+        &= 324827831149539837879950228963310467042555
+\end{align*} 
+
+\begin{align*}
+    u_2 &= 324827831149539837879950228963310467042555 \\
+    P_2 &= \sqrt{u_2^3 + u_2 \cdot (-6n - 3) - (432n^6 + 1296n^5 + 1620n^4 + 1044n^3 + 351n^2 + 54n + 2)}
+\end{align*}
+
+
+\subsubsection{Point addition for $k = 3$}
+
+\subsubsubsection{Determining the slope, $\lambda$}
+
+\begin{align*}
+    \lambda &= \dfrac{P_2 - P_1}{u_2 - u_1}\\
+            &= \dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042555-2}\\
+            &= \dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}
+\end{align*}
+
+\subsubsubsection{Calculating $(u_3, P_3)$}
+
+\begin{align*}
+    u_3 &= \biggl(\dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}\biggl)^2 - u_1 - u_2 \\
+       &= \biggl(\dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}\biggl)^2 - 2 - 324827831149539837879950228963310467042555  \\
+       &= \biggl(\dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}\biggl)^2 - 324827831149539837879950228963310467042557  \\
+\end{align*}
+
+\begin{align*}
+    P_3 = \left(\dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}\right)\cdot (2 - u_3) - P_1
+\end{align*}
+
+
+\subsubsection{Determining $x,y,z$ of the sums of three cubes problem for 3}
+
+For the problem $x^3 + y^3 + z^3 = 3$,
+
+\begin{align*}
+    x = \dfrac{(36n^3 + 54n^2 + 27n + 4) + P_3}{Q} 
+\end{align*}
+\begin{align*}
+    y = \dfrac{(36n^3 + 54n^2 + 27n + 4) - P_3}{Q}
+\end{align*}
+\begin{align*}
+    z = (6n+3)-\dfrac{2 \cdot (36n^3 + 54n^2 + 27n + 4)}{Q}
+\end{align*}
+    
+\begin{multline*}
+Q = -u_3 + 3(2n+1)^2\\
+= -\biggl(\biggl(\dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}\biggl)^2 - 324827831149539837879950228963310467042557\biggl) \\
++ 3 \cdot (2n+1)^2
+\end{multline*}
+  
+Recall also that:
+
+\begin{align*}
+    P_3 = \left(\dfrac{\sqrt{u_2^3 + u_2 \cdot (-6n - 3) + B} - \sqrt{2^3 + 2\cdot (-6n - 3) + B}}{324827831149539837879950228963310467042553}\right)\cdot (2 - u_3) - P_1
+\end{align*}
+
+where $B = -(432n^6 + 1296n^5 + 1620n^4 + 1044n^3 + 351n^2 + 54n + 2)$
+

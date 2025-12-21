@@ -1,3 +1,7 @@
+In this section, we utilize the elliptic curve connections as shown in equation \eqref{2.115} to develop families of infinitely many solutions to the sums of three cubes problem particularly for the unsolved cases of $k = 3, 51$ using group law formulas from elliptic curve theory.
+
+Let us first recall these group laws for Weierstrass elliptic curves:
+
 \subsection{Group Law Formulas}
 
 For an elliptic curve $E: y^2 = x^3 + Ax + B$:

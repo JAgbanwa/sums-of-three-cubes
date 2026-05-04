@@ -294,3 +294,202 @@ Recall also that:
 
 where $B = -(432n^6 + 1296n^5 + 1620n^4 + 1044n^3 + 351n^2 + 54n + 2)$
 
+
+***********latest***********
+
+\subsubsection{Modular analysis}
+
+We make a modular analysis (with the computational assistance of SageMath) of the fraction $\dfrac{36n^3 - 19}{\alpha}$ to determine values of $(n, \alpha)$ for which this fraction yields integer solutions. It was determined that $n \equiv a\pmod{p}$ where $a,p$ are positive integers. Within the range $p < 20$, for instance, $n \equiv 4\pmod{5}$, $n \equiv 10\pmod{11}$, $n \equiv 1\pmod{17}$, and $n \equiv 0\pmod{19}$ \cite{Agbanwa_s3c_particularly_for_114}.
+Further searches found a promising congruence $n \equiv 2094194294170672539119 \pmod{3782234599225650235415}$, equivalently $n = 3782234599225650235415 \cdot k_1 +  2094194294170672539119$ \cite{agbanwa_congruence_screening}.
+
+Recall that
+\begin{equation*}
+    m = \dfrac{r^3 - k}{6}
+\end{equation*}
+For the specific case of $k=114$:
+\begin{equation*}
+    m = \dfrac{r^3 - 114}{6}
+\end{equation*}
+Solutions to the above equation are of the form $m = 36n^3 - 19$ and $r = 6n$.
+
+Equation \eqref{2.113} can be rewritten as:
+
+\begin{equation}\label{5.98}
+     P^{2} = -Q^{3} + 36n^2 \cdot Q^2 - 2(6n)(36n^3 - 19)  \cdot Q + (36n^3 - 19)^2
+\end{equation}
+
+For arbitrary values of $n \geq 1$, we calculate their corresponding rational points $(Q,P)$.
+
+Recall from Section~\ref{sec:derivation} that $Q = 2q$ and that $m = (r^3-k)/6$. Given a rational point $(Q, P)$ on the elliptic curve corresponding to parameter $n$ (so $m = 36n^3-19$, $r = 6n$), the corresponding rational solution $(x, y, z)$ to $x^3+y^3+z^3 = 114$ is recovered via:
+
+\begin{equation}\label{recovery}
+    x = \frac{m + P}{Q}, \quad y = \frac{m - P}{Q}, \quad z = r - \frac{2m}{Q}.
+\end{equation}
+
+These follow from equations \eqref{1.31}, \eqref{1.32}, and \eqref{3.2}, noting the symmetry of the equation in $x$ and $y$ under relabelling $x_1 \leftrightarrow y_1$.
+
+\subsubsection{\texorpdfstring{Solving equation \eqref{2.113} for $n \equiv 1\pmod{17}$}{Solving equation 2.113 for n equivalent to 1 mod 17}}
+
+When $n = 1$, the resulting equation is:
+
+\begin{equation}\label{5.991}
+    P^2 = -Q^3 + 36\cdot Q^2 - 204 \cdot Q + 289
+\end{equation}
+
+whose rational point is $(Q,P) = (-6, -55)$ \cite{agbanwa_elliptic_arbitrary_2024}.
+
+Using the recovery formulas \eqref{recovery}:
+
+\begin{align*}
+    x &= \dfrac{(36(1)^3 - 19) + (-55)}{-6}
+      = \dfrac{19}{3}\\
+    y &= \dfrac{(36(1)^3 - 19) - (-55)}{-6}
+      = -12\\
+    z &= 6(1)- \dfrac{2 \cdot (36(1)^3 - 19)}{-6}
+      = \dfrac{35}{3}
+\end{align*}
+
+\begin{equation*}
+    \left(\dfrac{19}{3}\right)^3 + (-12)^3 + \left(\dfrac{35}{3}\right)^3 = 114
+\end{equation*}
+
+Equation \eqref{5.991} is subsequently transformed to this form:
+
+\begin{equation}\label{5.997}
+    P^2 = X^3 + 36\cdot X^2 + 204 \cdot X + 289
+\end{equation}
+
+with reference to equation \eqref{2.115} where $Q \rightarrow -X$.
+
+Other multiples of the above rational solution can be found computationally using Magma \cite{agbanwa_modulo_17}. The code can be tweaked to generate as many multiples as needed.
+
+
+When $n = 18$, the resulting equation is:
+
+\begin{equation}\label{5.992}
+    P^2 = -Q^3 + 11664 \cdot Q^2 - 45345528 \cdot Q + 44071864489
+\end{equation}
+
+whose rational point is $(Q,P) = \left(-\dfrac{185089608}{361}, -\dfrac{2546797361041}{6859}\right)$ \cite{agbanwa_elliptic_arbitrary_2024}.
+
+Using the recovery formulas \eqref{recovery}:
+
+\begin{align*}
+    x &= \dfrac{(36(18)^3 - 19) +\dfrac{2546797361041}{6859}}{-\dfrac{185089608}{361}}
+      = -\dfrac{8935164}{12331}\\
+    y &= \dfrac{(36(18)^3 - 19) - \dfrac{2546797361041}{6859}}{-\dfrac{185089608}{361}}
+      = \dfrac{495073}{684}\\
+    z &= 6(18)- \dfrac{2 \cdot (36(18)^3 - 19)}{-\dfrac{185089608}{361}}
+      = \dfrac{2542445}{23364}
+\end{align*}
+
+\begin{equation*}
+    \left(-\dfrac{8935164}{12331}\right)^3 + \left(\dfrac{495073}{684}\right)^3 + \left(\dfrac{2542445}{23364}\right)^3 = 114
+\end{equation*}
+
+Similarly, equation \eqref{5.992} is transformed to:
+
+\begin{equation}\label{5.9931}
+    P^2 = X^3 + 11664 \cdot X^2 + 45345528 \cdot X + 44071864489
+\end{equation}
+
+Other multiples of the above rational solution can be found computationally using Magma \cite{agbanwa_modulo_17}. The code can be tweaked to generate as many multiples as needed.
+
+
+When $n = 35$, the resulting equation is:
+
+\begin{equation}\label{5.993}
+    P^2 = -Q^3 + 44100 \cdot Q^2 - 648262020 \cdot Q + 2382333597361
+\end{equation}
+
+whose rational point is $(Q,P) = \left(\dfrac{18579428171370729554967180}{5940560614682397752161}, \dfrac{398012845566067230292856202887488879471}{457868901666652343402341914699409}\right)$ \cite{agbanwa_elliptic_arbitrary_2024}.
+
+Using the recovery formulas \eqref{recovery}:
+
+\begin{align*}
+    x &= \dfrac{317327857679685063263370}{411339254811547296857}\\
+    y &= \dfrac{18737758844444511451853}{86921724611539618470}\\
+    z &= -\dfrac{4676638377872274010261}{6018677318143446390}
+\end{align*}
+\begin{equation*}
+    \left(\dfrac{317327857679685063263370}{411339254811547296857}\right)^3 + \left( \dfrac{18737758844444511451853}{86921724611539618470}\right)^3 + \left(-\dfrac{4676638377872274010261}{6018677318143446390}\right)^3 = 114
+\end{equation*}
+
+The above sum can also be verified with the Magma code of \cite{agbanwa_magma_verification_2026}.
+
+We transform equation \eqref{5.993} to:
+
+\begin{equation}\label{5.9932}
+    P^2 = X^3 + 44100 \cdot X^2 + 648262020 \cdot X + 2382333597361
+\end{equation}
+
+where $Q \rightarrow -X$. More multiples of the rational solution to equation \eqref{5.9932} were generated computationally on Magma \cite{agbanwa_modulo_17}.
+
+When $n = 52$, the resulting equation is:
+
+\begin{equation}\label{5.99991}
+     P^2 = -Q^3 + 97344 \cdot Q^2 - 3158606256 \cdot Q + 25622517773161
+\end{equation}
+
+The growing complexity of the resulting elliptic curve equation makes the computational search for the rank and generators infeasible on personal computers.
+
+
+\subsubsection{\texorpdfstring{Solving equation \eqref{3.03} for a fixed $\alpha$}{Solving equation 3.03 for a fixed alpha}}
+
+In this subsection, we substitute specific values of $\alpha$ into equation \eqref{5.909}, in search for rational solutions to \eqref{5.909} and by extension, rational solutions to $k = 114$.
+
+Equation \eqref{3.03} can be re-expressed as:
+
+\begin{equation} \label{5.99}
+    \Phi = -(\alpha + 6n) + \sqrt{(\alpha + 6n)^2 +  \dfrac{36n^3 - 19}{\alpha}}
+\end{equation}
+
+Let:
+\begin{equation}\label{6.0}
+  Y^2  = (\alpha + 6n)^2 +  \dfrac{36n^3 - 19}{\alpha}
+\end{equation}
+\begin{equation} \label{5.909}
+    Y^2  = \dfrac{36}{\alpha} \cdot n^3 + 36n^2 + 12 \alpha \cdot n + \alpha^2  - \dfrac{19}{\alpha}
+\end{equation}
+
+Suppose $\alpha = 19$. Equation \eqref{6.0} is re-expressible as:
+\begin{align*}
+    Y^2  &= (19 + 6n)^2 + \dfrac{36}{19} \cdot n^3 - 1
+\end{align*}
+\begin{equation}\label{6.15}
+    Y^2 = \dfrac{36}{19} \cdot n^3 + 36n^2 + 228\cdot n + 360
+\end{equation}
+
+Using the computational assistance of Magma \cite{agbanwa_sums_cubes_2025}, a rational point satisfying equation \eqref{6.15} was found:
+
+\begin{multline}\label{6.16}
+(n, Y) = \left(-\dfrac{864648976084347353011927145714245480219355}{635859049050585085274882901637910426578284}, \right.\\
+\left.-\dfrac{3894228350436067038312065162575538689415800674650195219149913735}{368355224867664550854516818920804459714526459420694554473909596}\right)
+\end{multline}
+
+The corresponding values of $x, y, z$ (with $x = -\alpha + Y$, $y = -\alpha - Y$, $z = 2\alpha + 6n$) are:
+
+\begin{align*}
+    x &= -\dfrac{10892977622921693504547884722070823423991803403643391754154196059}{368355224867664550854516818920804459714526459420694554473909596}\\
+    y &= -\dfrac{3104520922049559427923754396919746045160202054343001315854368589}{368355224867664550854516818920804459714526459420694554473909596}\\
+    z &= \dfrac{3162458334569358187062331231325853888109777}{105976508175097514212480483606318404429714}
+\end{align*}
+
+\begin{multline*}
+     \left(-\dfrac{10892977622921693504547884722070823423991803403643391754154196059}{368355224867664550854516818920804459714526459420694554473909596}\right)^3 +  \\
+     \left(-\dfrac{3104520922049559427923754396919746045160202054343001315854368589}{368355224867664550854516818920804459714526459420694554473909596}\right)^3 +  \\
+     \left(\dfrac{3162458334569358187062331231325853888109777}{105976508175097514212480483606318404429714}\right)^3 = 114
+\end{multline*}
+
+The above results have been computationally verified to satisfy $114$ \cite{agbanwa_magma_code_2025}. Given that only one rational point was yielded, point doubling can be used to generate more points $2P, 3P, 4P, 5P, \ldots$ and by extension more rational solutions to $k = 114$. With the computational assistance of SageMath, several multiples were found \cite{agbanwa_sagemath_point_generation_2026}.
+
+On substituting $\alpha = 17$ into equation \eqref{6.0}, the resulting equation is:
+
+\begin{equation}\label{6.151}
+    Y^2 = \dfrac{36}{17} \cdot n^3 + 36n^2 + 204 \cdot n + \dfrac{4894}{17}
+\end{equation}
+
+A computational search for rational points on Magma returned no solutions \cite{agbanwa_magma_alpha17_202466}. The rank of equation \eqref{6.151} was computationally determined to be $0$ \cite{Agbanwa_Magma_Elliptic_Rank_17}.
+
+Aside from $\alpha = 19$, which yielded the rational point generating equation~\eqref{5.99}, we employed the computational assistance of SageMath to search for values of $\alpha$ for which equation \eqref{5.909} has rank $0$ or $\geq 1$ for the first $50$ values of $\alpha$ \cite{agbanwa_sagemath_rank_2026}. The values of $\alpha$ with rank $\geq 1$ observably follow no predictable pattern, hence the difficulty in generating a recursive pattern for $(n, Y)$ for arbitrary values of $\alpha$.
+
